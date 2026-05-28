@@ -1,45 +1,65 @@
 import { useEffect, useState, useCallback } from 'react'
-import { supabase } from '../lib/supabase'
+import { 
+  collection, query, orderBy, onSnapshot, 
+  getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc
+} from 'firebase/firestore'
+import { db } from '../lib/firebase'
 
 export function useOrders() {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
 
-  const fetchOrders = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('print_orders')
-      .select('*, printers(name), profiles(display_name)')
-      .order('created_at', { ascending: false })
-    if (!error) setOrders(data || [])
-    setLoading(false)
+  useEffect(() => {
+    const q = query(collection(db, 'print_orders'), orderBy('created_at', 'desc'))
+    const unsub = onSnapshot(q, (snap) => {
+      setOrders(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+      setLoading(false)
+    })
+    return unsub
   }, [])
 
-  useEffect(() => {
-    fetchOrders()
-    const channel = supabase
-      .channel('print_orders_changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'print_orders' }, fetchOrders)
-      .subscribe()
-    return () => supabase.removeChannel(channel)
-  }, [fetchOrders])
-
-  return { orders, loading, refresh: fetchOrders }
+  return { orders, loading }
 }
 
 export function usePrinters() {
   const [printers, setPrinters] = useState([])
   useEffect(() => {
-    supabase.from('printers').select('*').order('name').then(({ data }) => setPrinters(data || []))
+    const q = query(collection(db, 'printers'), orderBy('name'))
+    const unsub = onSnapshot(q, (snap) => {
+      setPrinters(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+    })
+    return unsub
   }, [])
   return printers
 }
 
 export function useArticleLibrary() {
   const [articles, setArticles] = useState([])
-  const fetchArticles = useCallback(async () => {
-    const { data } = await supabase.from('article_library').select('*').order('article_number')
-    setArticles(data || [])
+  useEffect(() => {
+    const q = query(collection(db, 'article_library'), orderBy('article_number'))
+    const unsub = onSnapshot(q, (snap) => {
+      setArticles(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+    })
+    return unsub
   }, [])
-  useEffect(() => { fetchArticles() }, [fetchArticles])
-  return { articles, refresh: fetchArticles }
+  return { articles }
 }
+
+// Helper functions
+export const addOrder = (data) => addDoc(collection(db, 'print_orders'), {
+  ...data, 
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString()
+})
+
+export const updateOrder = (id, data) => updateDoc(doc(db, 'print_orders', id), {
+  ...data,
+  updated_at: new Date().toISOString()
+})
+
+export const upsertArticle = (articleNumber, data) => 
+  setDoc(doc(db, 'article_library', articleNumber), data, { merge: true })
+
+export const addPrinter = (data) => addDoc(collection(db, 'printers'), data)
+export const updatePrinter = (id, data) => updateDoc(doc(db, 'printers', id), data)
+export const deleteArticle = (id) => deleteDoc(doc(db, 'article_library', id))
