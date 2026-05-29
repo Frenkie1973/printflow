@@ -44,7 +44,6 @@ function useMaintenanceOverdue() {
 
   return overdueCount
 }
-import { useOrders } from '../hooks/useOrders'
 import { LayoutDashboard, Layers, Library, Package2, LogOut, Wrench } from 'lucide-react'
 
 const NavItem = ({ to, icon: Icon, label, badge }) => (
@@ -66,7 +65,7 @@ const NavItem = ({ to, icon: Icon, label, badge }) => (
 
 export default function Layout({ children }) {
   const { signOut } = useAuth()
-  const { orders } = useOrders()
+  const { orders } = useOrdersHook()
   const printingCount = orders.filter(o => o.status === 'printing').length
   const newCount = orders.filter(o => o.status === 'new').length
   const overdueMaintenanceCount = useMaintenanceOverdue()
