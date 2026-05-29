@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useOrders } from '../hooks/useOrders'
-import { LayoutDashboard, Printer, Library, LogOut } from 'lucide-react'
+import { LayoutDashboard, Layers, Library, LogOut } from 'lucide-react'
 
 const NavItem = ({ to, icon: Icon, label, badge }) => (
   <NavLink to={to} className={({ isActive }) =>
@@ -94,7 +94,7 @@ export default function Layout({ children }) {
       <nav className="sm:hidden fixed bottom-0 inset-x-0 bg-slate-900/95 backdrop-blur border-t border-slate-800 z-40 pb-safe">
         <div className="flex justify-around py-2">
           <NavItem to="/" icon={LayoutDashboard} label="Orders" badge={newCount} />
-          <NavItem to="/printers" icon={Printer} label="Printers" badge={printingCount} />
+          <NavItem to="/printers" icon={Layers} label="Printers" badge={printingCount} />
           <NavItem to="/artikelen" icon={Library} label="Artikelen" />
           <button
             onClick={signOut}
