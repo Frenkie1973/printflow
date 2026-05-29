@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
-import { Printer } from 'lucide-react'
 
 export default function LoginPage() {
   const { signIn } = useAuth()
@@ -30,13 +29,12 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-        <div className="flex items-center gap-3 mb-8 justify-center">
-          <div className="w-10 h-10 bg-brand-500 rounded-xl flex items-center justify-center">
-            <Printer size={20} className="text-white" />
-          </div>
-          <div>
-            <div className="text-white font-bold text-xl tracking-tight">PrintFlow</div>
-            <div className="text-slate-500 text-xs font-mono">3D Print Manager</div>
+        {/* Logo + naam */}
+        <div className="flex flex-col items-center mb-10 gap-4">
+          <img src="/qline-logo.png" alt="Q-Line" className="h-20 w-auto" />
+          <div className="text-center">
+            <div className="text-white font-black text-2xl uppercase tracking-widest" style={{fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif'}}>Q-Line</div>
+            <div className="text-[#FF2300] font-bold text-3xl tracking-tight" style={{fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif'}}>PrintFlow</div>
           </div>
         </div>
 
@@ -51,8 +49,8 @@ export default function LoginPage() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 text-sm"
-                placeholder="naam@bedrijf.nl"
+                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-[#FF2300] text-sm"
+                placeholder="naam@q-line.com"
               />
             </div>
             <div>
@@ -62,7 +60,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 required
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 text-sm"
+                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-[#FF2300] text-sm"
                 placeholder="••••••••"
               />
             </div>
@@ -72,7 +70,8 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-brand-500 hover:bg-brand-600 disabled:opacity-50 text-white font-medium rounded-lg py-2.5 text-sm transition-colors"
+              className="w-full disabled:opacity-50 text-white font-bold rounded-lg py-2.5 text-sm transition-colors"
+              style={{backgroundColor: '#FF2300'}}
             >
               {loading ? 'Bezig…' : 'Inloggen'}
             </button>
