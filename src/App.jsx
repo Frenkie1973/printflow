@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard'
 import LoginPage from './pages/LoginPage'
 import PrintersPage from './pages/PrintersPage'
 import ArtikelsPage from './pages/ArtikelsPage'
+import MaterialenPage from './pages/MaterialenPage'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/printers" element={<ProtectedRoute><PrintersPage /></ProtectedRoute>} />
           <Route path="/artikelen" element={<ProtectedRoute><ArtikelsPage /></ProtectedRoute>} />
+          <Route path="/materialen" element={<ProtectedRoute><MaterialenPage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
