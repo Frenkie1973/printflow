@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useOrders } from '../hooks/useOrders'
-import { LayoutDashboard, Layers, Library, LogOut } from 'lucide-react'
+import { LayoutDashboard, Layers, Library, Package2, LogOut } from 'lucide-react'
 
 const NavItem = ({ to, icon: Icon, label, badge }) => (
   <NavLink to={to} className={({ isActive }) =>
@@ -51,6 +51,10 @@ export default function Layout({ children }) {
               `px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white'}`}>
               Artikelen
             </NavLink>
+            <NavLink to="/materialen" className={({ isActive }) =>
+              `px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white'}`}>
+              Materialen
+            </NavLink>
           </nav>
           <div className="flex items-center gap-3">
             {printingCount > 0 && (
@@ -96,6 +100,7 @@ export default function Layout({ children }) {
           <NavItem to="/" icon={LayoutDashboard} label="Orders" badge={newCount} />
           <NavItem to="/printers" icon={Layers} label="Printers" badge={printingCount} />
           <NavItem to="/artikelen" icon={Library} label="Artikelen" />
+          <NavItem to="/materialen" icon={Package2} label="Materialen" />
           <button
             onClick={signOut}
             className="flex flex-col items-center gap-1 px-4 py-2 text-slate-500 hover:text-slate-300 transition-colors"
