@@ -84,3 +84,31 @@ export const updateFilament = (id, data) => updateDoc(doc(db, 'filaments', id), 
 export const deleteFilament = (id) => deleteDoc(doc(db, 'filaments', id))
 
 export const deleteOrder = (id) => deleteDoc(doc(db, 'print_orders', id))
+
+export function useMaintenanceTasks(printerId) {
+  const [tasks, setTasks] = useState([])
+  useEffect(() => {
+    if (!printerId) return
+    const q = query(collection(db, 'printers', printerId, 'maintenance_tasks'), orderBy('interval_hours'))
+    const unsub = onSnapshot(q, (snap) => {
+      setTasks(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+    })
+    return unsub
+  }, [printerId])
+  return { tasks }
+}
+
+export const addMaintenanceTask = (printerId, data) =>
+  addDoc(collection(db, 'printers', printerId, 'maintenance_tasks'), data)
+
+export const updateMaintenanceTask = (printerId, taskId, data) =>
+  updateDoc(doc(db, 'printers', printerId, 'maintenance_tasks', taskId), data)
+
+export const deleteMaintenanceTask = (printerId, taskId) =>
+  deleteDoc(doc(db, 'printers', printerId, 'maintenance_tasks', taskId))
+
+export const completeMaintenance = (printerId, taskId, totalHours) =>
+  updateDoc(doc(db, 'printers', printerId, 'maintenance_tasks', taskId), {
+    last_done_at: new Date().toISOString(),
+    last_done_at_hours: totalHours,
+  })
