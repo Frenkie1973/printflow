@@ -27,7 +27,7 @@ export default function ArtikelsPage() {
       <div className="relative mb-4">
         <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Zoek op artikelnummer of omschrijving…"
-          className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 text-sm" />
+          className="w-full bg-zinc-950 border border-zinc-900 rounded-xl pl-9 pr-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 text-sm" />
       </div>
       {filtered.length === 0 ? (
         <div className="text-center py-12 text-slate-600">
@@ -37,7 +37,7 @@ export default function ArtikelsPage() {
       ) : (
         <div className="space-y-2">
           {filtered.map(a => (
-            <div key={a.id} className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-start gap-3">
+            <div key={a.id} className="bg-zinc-950 border border-zinc-900 rounded-xl p-4 flex items-start gap-3">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-white font-semibold text-sm font-mono">{a.article_number}</span>
