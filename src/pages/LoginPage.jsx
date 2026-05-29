@@ -9,22 +9,27 @@ export default function LoginPage() {
   const [mode, setMode] = useState('login')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState('')
 
   const handle = async (e) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-    setSuccess('')
     try {
       if (mode === 'login') {
-        const { error } = await signIn(email, password)
-        if (error) setError(error.message)
+        await signIn(email, password)
       } else {
-        const { error } = await signUp(email, password)
-        if (error) setError(error.message)
-        else setSuccess('Check je e-mail voor een bevestigingslink.')
+        await signUp(email, password)
+        await signIn(email, password)
       }
+    } catch (err) {
+      const msgs = {
+        'auth/user-not-found': 'Geen account gevonden met dit e-mailadres.',
+        'auth/wrong-password': 'Verkeerd wachtwoord.',
+        'auth/email-already-in-use': 'Er bestaat al een account met dit e-mailadres.',
+        'auth/weak-password': 'Wachtwoord moet minimaal 6 tekens zijn.',
+        'auth/invalid-credential': 'E-mailadres of wachtwoord klopt niet.',
+      }
+      setError(msgs[err.code] || err.message)
     } finally {
       setLoading(false)
     }
@@ -33,7 +38,6 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-        {/* Logo */}
         <div className="flex items-center gap-3 mb-8 justify-center">
           <div className="w-10 h-10 bg-brand-500 rounded-xl flex items-center justify-center">
             <Printer size={20} className="text-white" />
@@ -74,7 +78,6 @@ export default function LoginPage() {
             </div>
 
             {error && <p className="text-red-400 text-sm bg-red-900/20 rounded-lg px-3 py-2">{error}</p>}
-            {success && <p className="text-emerald-400 text-sm bg-emerald-900/20 rounded-lg px-3 py-2">{success}</p>}
 
             <button
               type="submit"
@@ -86,7 +89,7 @@ export default function LoginPage() {
           </form>
 
           <button
-            onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); setSuccess('') }}
+            onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError('') }}
             className="w-full mt-4 text-slate-500 hover:text-slate-300 text-sm transition-colors"
           >
             {mode === 'login' ? 'Nog geen account? Registreren' : 'Terug naar inloggen'}
@@ -96,3 +99,4 @@ export default function LoginPage() {
     </div>
   )
 }
+
