@@ -63,3 +63,22 @@ export const upsertArticle = (articleNumber, data) =>
 export const addPrinter = (data) => addDoc(collection(db, 'printers'), data)
 export const updatePrinter = (id, data) => updateDoc(doc(db, 'printers', id), data)
 export const deleteArticle = (id) => deleteDoc(doc(db, 'article_library', id))
+
+export function useFilaments() {
+  const [filaments, setFilaments] = useState([])
+  useEffect(() => {
+    const q = query(collection(db, 'filaments'), orderBy('article_number'))
+    const unsub = onSnapshot(q, (snap) => {
+      setFilaments(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+    })
+    return unsub
+  }, [])
+  return { filaments }
+}
+
+export const addFilament = (data) => addDoc(collection(db, 'filaments'), {
+  ...data,
+  created_at: new Date().toISOString()
+})
+export const updateFilament = (id, data) => updateDoc(doc(db, 'filaments', id), data)
+export const deleteFilament = (id) => deleteDoc(doc(db, 'filaments', id))
