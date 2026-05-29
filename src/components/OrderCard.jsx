@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { updateOrder, useOrders, usePrinters } from '../hooks/useOrders'
+import { updateOrder, deleteOrder, useOrders, usePrinters } from '../hooks/useOrders'
 import { useAuth } from '../hooks/useAuth'
 import StatusBadge from './StatusBadge'
 import { Countdown, EndTime } from './Countdown'
 import OrderForm from './OrderForm'
 import { differenceInDays, format, isPast, isToday, isTomorrow } from 'date-fns'
 import { nl } from 'date-fns/locale'
-import { Play, CheckCircle, XCircle, Copy, Ban, ChevronDown, ChevronUp, Printer, Clock, Calendar, Package, Palette, User } from 'lucide-react'
+import { Play, CheckCircle, XCircle, Copy, Ban, Trash2, ChevronDown, ChevronUp, Printer, Clock, Calendar, Package, Palette, User } from 'lucide-react'
 
 function deadlineColor(deadline) {
   if (!deadline) return 'text-slate-500'
@@ -157,13 +157,19 @@ export default function OrderCard({ order, onRefresh }) {
               <button onClick={() => setEditing(true)} className="btn-secondary text-xs ml-auto">Bewerken</button>
               <button onClick={duplicate} className="btn-secondary text-xs"><Copy size={11} /></button>
               <button onClick={() => updateStatus('cancelled')} disabled={loading} className="text-slate-600 hover:text-red-400 transition-colors"><Ban size={14} /></button>
+              <button onClick={async () => { if (confirm('Order verwijderen?')) await deleteOrder(order.id) }}
+                className="text-slate-600 hover:text-red-400 transition-colors"><Trash2 size={14} /></button>
             </div>
           </div>
         )}
 
         {!isActive && (
-          <div className="px-4 pb-4">
+          <div className="px-4 pb-4 flex gap-2">
             <button onClick={duplicate} className="btn-secondary text-xs flex items-center gap-1.5"><Copy size={11} />Dupliceren</button>
+            <button onClick={async () => { if (confirm('Order verwijderen?')) await deleteOrder(order.id) }}
+              className="btn-secondary text-xs flex items-center gap-1.5 text-red-400 hover:text-red-300">
+              <Trash2 size={11} />Verwijderen
+            </button>
           </div>
         )}
       </div>
