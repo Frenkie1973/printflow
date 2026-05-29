@@ -31,7 +31,7 @@ export default function PrintersPage() {
       <h1 className="text-white font-bold text-xl mb-6 flex items-center gap-2">
         <Printer size={20} className="text-brand-500" />Printers beheren
       </h1>
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 mb-6">
+      <div className="bg-zinc-950 border border-zinc-900 rounded-xl p-4 mb-6">
         <h2 className="text-slate-400 text-xs uppercase tracking-wide font-medium mb-3">Printer toevoegen</h2>
         <div className="flex gap-2">
           <input value={newName} onChange={e => setNewName(e.target.value)} onKeyDown={e => e.key === 'Enter' && add()} placeholder="Naam (bv. Prusa XL – Hal 2)"
@@ -45,7 +45,7 @@ export default function PrintersPage() {
       </div>
       <div className="space-y-2">
         {printers.map(p => (
-          <div key={p.id} className={`bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center gap-3 ${!p.active && 'opacity-50'}`}>
+          <div key={p.id} className={`bg-zinc-950 border border-zinc-900 rounded-xl p-4 flex items-center gap-3 ${!p.active && 'opacity-50'}`}>
             <div className={`w-2 h-2 rounded-full flex-shrink-0 ${p.active ? 'bg-emerald-400' : 'bg-slate-600'}`} />
             {editId === p.id ? (
               <div className="flex-1 flex gap-2">
