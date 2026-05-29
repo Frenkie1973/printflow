@@ -3,10 +3,9 @@ import { useAuth } from '../hooks/useAuth'
 import { Printer } from 'lucide-react'
 
 export default function LoginPage() {
-  const { signIn, signUp } = useAuth()
+  const { signIn } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [mode, setMode] = useState('login')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -15,18 +14,11 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
     try {
-      if (mode === 'login') {
-        await signIn(email, password)
-      } else {
-        await signUp(email, password)
-        await signIn(email, password)
-      }
+      await signIn(email, password)
     } catch (err) {
       const msgs = {
         'auth/user-not-found': 'Geen account gevonden met dit e-mailadres.',
         'auth/wrong-password': 'Verkeerd wachtwoord.',
-        'auth/email-already-in-use': 'Er bestaat al een account met dit e-mailadres.',
-        'auth/weak-password': 'Wachtwoord moet minimaal 6 tekens zijn.',
         'auth/invalid-credential': 'E-mailadres of wachtwoord klopt niet.',
       }
       setError(msgs[err.code] || err.message)
@@ -49,9 +41,7 @@ export default function LoginPage() {
         </div>
 
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <h2 className="text-white font-semibold text-lg mb-5">
-            {mode === 'login' ? 'Inloggen' : 'Account aanmaken'}
-          </h2>
+          <h2 className="text-white font-semibold text-lg mb-5">Inloggen</h2>
 
           <form onSubmit={handle} className="space-y-4">
             <div>
@@ -84,19 +74,11 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full bg-brand-500 hover:bg-brand-600 disabled:opacity-50 text-white font-medium rounded-lg py-2.5 text-sm transition-colors"
             >
-              {loading ? 'Bezig…' : mode === 'login' ? 'Inloggen' : 'Account aanmaken'}
+              {loading ? 'Bezig…' : 'Inloggen'}
             </button>
           </form>
-
-          <button
-            onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError('') }}
-            className="w-full mt-4 text-slate-500 hover:text-slate-300 text-sm transition-colors"
-          >
-            {mode === 'login' ? 'Nog geen account? Registreren' : 'Terug naar inloggen'}
-          </button>
         </div>
       </div>
     </div>
   )
 }
-
