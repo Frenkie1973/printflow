@@ -1,7 +1,8 @@
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { usePrinters } from '../hooks/useOrders'
 import { useOrders } from '../hooks/useOrders'
-import { LayoutDashboard, Layers, Library, Package2, LogOut } from 'lucide-react'
+import { LayoutDashboard, Layers, Library, Package2, LogOut, Wrench } from 'lucide-react'
 
 const NavItem = ({ to, icon: Icon, label, badge }) => (
   <NavLink to={to} className={({ isActive }) =>
@@ -23,6 +24,7 @@ const NavItem = ({ to, icon: Icon, label, badge }) => (
 export default function Layout({ children }) {
   const { signOut } = useAuth()
   const { orders } = useOrders()
+  const printers = usePrinters()
   const printingCount = orders.filter(o => o.status === 'printing').length
   const newCount = orders.filter(o => o.status === 'new').length
 
