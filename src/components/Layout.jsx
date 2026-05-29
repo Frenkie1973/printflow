@@ -1,6 +1,49 @@
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { usePrinters } from '../hooks/useOrders'
+import { usePrinters, useOrders as useOrdersHook } from '../hooks/useOrders'
+import { collection, onSnapshot, query } from 'firebase/firestore'
+import { db } from '../lib/firebase'
+import { useEffect, useState, useMemo } from 'react'
+
+function useMaintenanceOverdue() {
+  const printers = usePrinters()
+  const { orders } = useOrdersHook()
+  const [allTasks, setAllTasks] = useState([])
+
+  useEffect(() => {
+    if (!printers.length) return
+    const unsubs = printers.map(p => {
+      const q = query(collection(db, 'printers', p.id, 'maintenance_tasks'))
+      return onSnapshot(q, snap => {
+        const tasks = snap.docs.map(d => ({ ...d.data(), id: d.id, printerId: p.id }))
+        setAllTasks(prev => {
+          const filtered = prev.filter(t => t.printerId !== p.id)
+          return [...filtered, ...tasks]
+        })
+      })
+    })
+    return () => unsubs.forEach(u => u())
+  }, [printers.map(p => p.id).join(',')])
+
+  const printerHours = useMemo(() => {
+    const map = {}
+    orders.forEach(o => {
+      if (o.status === 'done' && o.printer_id) {
+        const hrs = (Number(o.print_hours) || 0) + (Number(o.print_minutes) || 0) / 60
+        map[o.printer_id] = (map[o.printer_id] || 0) + hrs
+      }
+    })
+    return map
+  }, [orders])
+
+  const overdueCount = allTasks.filter(task => {
+    const totalHours = printerHours[task.printerId] || 0
+    const hoursSince = task.last_done_at_hours != null ? totalHours - task.last_done_at_hours : totalHours
+    return hoursSince >= task.interval_hours
+  }).length
+
+  return overdueCount
+}
 import { useOrders } from '../hooks/useOrders'
 import { LayoutDashboard, Layers, Library, Package2, LogOut, Wrench } from 'lucide-react'
 
@@ -24,9 +67,9 @@ const NavItem = ({ to, icon: Icon, label, badge }) => (
 export default function Layout({ children }) {
   const { signOut } = useAuth()
   const { orders } = useOrders()
-  const printers = usePrinters()
   const printingCount = orders.filter(o => o.status === 'printing').length
   const newCount = orders.filter(o => o.status === 'new').length
+  const overdueMaintenanceCount = useMaintenanceOverdue()
 
   return (
     <div className="min-h-screen bg-black pb-20 sm:pb-0">
@@ -65,6 +108,12 @@ export default function Layout({ children }) {
                 {printingCount} actief
               </span>
             )}
+            {overdueMaintenanceCount > 0 && (
+              <NavLink to="/printers" className="flex items-center gap-1.5 bg-amber-500/20 text-amber-400 text-xs px-2.5 py-1 rounded-full hover:bg-amber-500/30 transition-colors">
+                <Wrench size={12} className="animate-pulse" />
+                {overdueMaintenanceCount} onderhoud
+              </NavLink>
+            )}
             <button onClick={signOut} className="text-slate-500 hover:text-slate-300 transition-colors">
               <LogOut size={16} />
             </button>
@@ -82,12 +131,20 @@ export default function Layout({ children }) {
               <span className="text-[#FF2300] font-bold text-base" style={{fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif'}}>PrintFlow</span>
             </div>
           </div>
-          {printingCount > 0 && (
-            <span className="flex items-center gap-1.5 bg-[#FF2300]/20 text-[#FF2300] text-xs px-2 py-1 rounded-full">
-              <span className="w-1.5 h-1.5 bg-[#FF2300] rounded-full animate-pulse" />
-              {printingCount}
-            </span>
-          )}
+          <div className="flex items-center gap-2">
+            {printingCount > 0 && (
+              <span className="flex items-center gap-1.5 bg-[#FF2300]/20 text-[#FF2300] text-xs px-2 py-1 rounded-full">
+                <span className="w-1.5 h-1.5 bg-[#FF2300] rounded-full animate-pulse" />
+                {printingCount}
+              </span>
+            )}
+            {overdueMaintenanceCount > 0 && (
+              <NavLink to="/printers" className="flex items-center gap-1 bg-amber-500/20 text-amber-400 text-xs px-2 py-1 rounded-full">
+                <Wrench size={11} className="animate-pulse" />
+                {overdueMaintenanceCount}
+              </NavLink>
+            )}
+          </div>
         </div>
       </header>
 
