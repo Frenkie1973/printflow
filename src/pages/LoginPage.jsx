@@ -1,19 +1,26 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 
 export default function LoginPage() {
   const { signIn } = useAuth()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const emailRef = useRef()
+  const passRef = useRef()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handle = async (e) => {
     e.preventDefault()
+    // Lees direct uit DOM zodat browser autocomplete ook werkt
+    const email = emailRef.current.value.trim()
+    const password = passRef.current.value
+    if (!email || !password) {
+      setError('Vul je e-mailadres en wachtwoord in.')
+      return
+    }
     setLoading(true)
     setError('')
     try {
-      await signIn(email.trim(), password)
+      await signIn(email, password)
     } catch (err) {
       console.error('Login fout:', err.code, err.message)
       const msgs = {
@@ -24,7 +31,7 @@ export default function LoginPage() {
         'auth/too-many-requests': 'Te veel pogingen. Probeer later opnieuw.',
         'auth/network-request-failed': 'Geen internetverbinding.',
       }
-      setError(msgs[err.code] || `Fout: ${err.code || err.message}`)
+      setError(msgs[err.code] || 'Fout: ' + (err.code || err.message))
     } finally {
       setLoading(false)
     }
@@ -47,11 +54,11 @@ export default function LoginPage() {
             <div>
               <label className="block text-slate-400 text-sm mb-1.5">E-mailadres</label>
               <input
+                ref={emailRef}
                 type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
+                name="email"
                 autoComplete="email"
+                required
                 className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white placeholder-slate-500 focus:outline-none text-sm"
                 placeholder="naam@q-line.com"
               />
@@ -59,11 +66,11 @@ export default function LoginPage() {
             <div>
               <label className="block text-slate-400 text-sm mb-1.5">Wachtwoord</label>
               <input
+                ref={passRef}
                 type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
+                name="password"
                 autoComplete="current-password"
+                required
                 className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white placeholder-slate-500 focus:outline-none text-sm"
                 placeholder="••••••••"
               />
