@@ -1,16 +1,22 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth'
+import { useNavigate } from 'react-router-dom'
 
 export default function LoginPage() {
-  const { signIn } = useAuth()
+  const { signIn, user } = useAuth()
+  const navigate = useNavigate()
   const emailRef = useRef()
   const passRef = useRef()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // Als al ingelogd, direct doorsturen
+  useEffect(() => {
+    if (user) navigate('/', { replace: true })
+  }, [user])
+
   const handle = async (e) => {
     e.preventDefault()
-    // Lees direct uit DOM zodat browser autocomplete ook werkt
     const email = emailRef.current.value.trim()
     const password = passRef.current.value
     if (!email || !password) {
@@ -21,10 +27,11 @@ export default function LoginPage() {
     setError('')
     try {
       await signIn(email, password)
+      navigate('/', { replace: true })
     } catch (err) {
       console.error('Login fout:', err.code, err.message)
       const msgs = {
-        'auth/user-not-found': 'Geen account gevonden met dit e-mailadres.',
+        'auth/user-not-found': 'Geen account gevonden.',
         'auth/wrong-password': 'Verkeerd wachtwoord.',
         'auth/invalid-credential': 'E-mailadres of wachtwoord klopt niet.',
         'auth/invalid-email': 'Ongeldig e-mailadres.',
@@ -47,43 +54,25 @@ export default function LoginPage() {
             <div className="font-bold text-3xl tracking-tight" style={{fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif', color:'#FF2300'}}>PrintFlow</div>
           </div>
         </div>
-
         <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6">
           <h2 className="text-white font-semibold text-lg mb-5">Inloggen</h2>
           <form onSubmit={handle} className="space-y-4">
             <div>
               <label className="block text-slate-400 text-sm mb-1.5">E-mailadres</label>
-              <input
-                ref={emailRef}
-                type="email"
-                name="email"
-                autoComplete="email"
-                required
+              <input ref={emailRef} type="email" name="email" autoComplete="email" required
                 className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white placeholder-slate-500 focus:outline-none text-sm"
-                placeholder="naam@q-line.com"
-              />
+                placeholder="naam@q-line.com" />
             </div>
             <div>
               <label className="block text-slate-400 text-sm mb-1.5">Wachtwoord</label>
-              <input
-                ref={passRef}
-                type="password"
-                name="password"
-                autoComplete="current-password"
-                required
+              <input ref={passRef} type="password" name="password" autoComplete="current-password" required
                 className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white placeholder-slate-500 focus:outline-none text-sm"
-                placeholder="••••••••"
-              />
+                placeholder="••••••••" />
             </div>
-
             {error && <p className="text-red-400 text-sm bg-red-900/20 rounded-lg px-3 py-2">{error}</p>}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full disabled:opacity-50 text-white font-bold rounded-lg py-2.5 text-sm transition-colors"
-              style={{backgroundColor: '#FF2300'}}
-            >
+            <button type="submit" disabled={loading}
+              className="w-full disabled:opacity-50 text-white font-bold rounded-lg py-2.5 text-sm"
+              style={{backgroundColor: '#FF2300'}}>
               {loading ? 'Bezig…' : 'Inloggen'}
             </button>
           </form>
