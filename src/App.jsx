@@ -10,7 +10,7 @@ import MaterialenPage from './pages/MaterialenPage'
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
   if (loading) return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+    <div className="min-h-screen bg-black flex items-center justify-center">
       <div className="flex items-center gap-3 text-slate-500">
         <div className="w-4 h-4 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
         <span className="text-sm">Laden…</span>
