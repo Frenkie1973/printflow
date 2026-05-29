@@ -13,14 +13,18 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
     try {
-      await signIn(email, password)
+      await signIn(email.trim(), password)
     } catch (err) {
+      console.error('Login fout:', err.code, err.message)
       const msgs = {
         'auth/user-not-found': 'Geen account gevonden met dit e-mailadres.',
         'auth/wrong-password': 'Verkeerd wachtwoord.',
         'auth/invalid-credential': 'E-mailadres of wachtwoord klopt niet.',
+        'auth/invalid-email': 'Ongeldig e-mailadres.',
+        'auth/too-many-requests': 'Te veel pogingen. Probeer later opnieuw.',
+        'auth/network-request-failed': 'Geen internetverbinding.',
       }
-      setError(msgs[err.code] || err.message)
+      setError(msgs[err.code] || `Fout: ${err.code || err.message}`)
     } finally {
       setLoading(false)
     }
@@ -29,18 +33,16 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-        {/* Logo + naam */}
         <div className="flex flex-col items-center mb-10 gap-4">
           <img src="/qline-logo.png" alt="Q-Line" className="h-20 w-auto" />
           <div className="text-center">
             <div className="text-white font-black text-2xl uppercase tracking-widest" style={{fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif'}}>Q-Line</div>
-            <div className="text-[#FF2300] font-bold text-3xl tracking-tight" style={{fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif'}}>PrintFlow</div>
+            <div className="font-bold text-3xl tracking-tight" style={{fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif', color:'#FF2300'}}>PrintFlow</div>
           </div>
         </div>
 
-        <div className="bg-zinc-950 border border-slate-800 rounded-2xl p-6">
+        <div className="bg-zinc-950 border border-zinc-900 rounded-2xl p-6">
           <h2 className="text-white font-semibold text-lg mb-5">Inloggen</h2>
-
           <form onSubmit={handle} className="space-y-4">
             <div>
               <label className="block text-slate-400 text-sm mb-1.5">E-mailadres</label>
@@ -49,7 +51,8 @@ export default function LoginPage() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-[#FF2300] text-sm"
+                autoComplete="email"
+                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white placeholder-slate-500 focus:outline-none text-sm"
                 placeholder="naam@q-line.com"
               />
             </div>
@@ -60,7 +63,8 @@ export default function LoginPage() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 required
-                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-[#FF2300] text-sm"
+                autoComplete="current-password"
+                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white placeholder-slate-500 focus:outline-none text-sm"
                 placeholder="••••••••"
               />
             </div>
