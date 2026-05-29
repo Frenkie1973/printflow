@@ -82,3 +82,5 @@ export const addFilament = (data) => addDoc(collection(db, 'filaments'), {
 })
 export const updateFilament = (id, data) => updateDoc(doc(db, 'filaments', id), data)
 export const deleteFilament = (id) => deleteDoc(doc(db, 'filaments', id))
+
+export const deleteOrder = (id) => deleteDoc(doc(db, 'print_orders', id))
