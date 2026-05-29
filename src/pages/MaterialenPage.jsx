@@ -3,8 +3,7 @@ import { useFilaments, addFilament, updateFilament, deleteFilament } from '../ho
 import { Package, Plus, Trash2, Search, X } from 'lucide-react'
 
 const MATERIALEN = ['PLA', 'PETG', 'ABS', 'ASA', 'TPU', 'Nylon', 'PC', 'Resin', 'Overig']
-const KLEUREN = ['Zwart', 'Wit', 'Grijs', 'Rood', 'Blauw', 'Groen', 'Geel', 'Oranje', 'Transparant', 'Beige', 'Bruin', 'Paars', 'Roze', 'Zilver', 'Goud', 'Overig']
-const EMPTY = { article_number: '', brand: '', material: 'PLA', color: 'Zwart', notes: '' }
+const EMPTY = { article_number: '', brand: '', material: 'PLA', color: '', notes: '' }
 
 export default function MaterialenPage() {
   const { filaments } = useFilaments()
@@ -125,10 +124,9 @@ export default function MaterialenPage() {
                 </div>
                 <div>
                   <label className="block text-slate-400 text-xs mb-1.5">Kleur</label>
-                  <select value={form.color} onChange={e => setForm({...form, color: e.target.value})}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
-                    {KLEUREN.map(k => <option key={k}>{k}</option>)}
-                  </select>
+                  <input value={form.color} onChange={e => setForm({...form, color: e.target.value})}
+                    placeholder="bijv. Galaxy Black"
+                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none placeholder-slate-600" />
                 </div>
               </div>
               <div>
