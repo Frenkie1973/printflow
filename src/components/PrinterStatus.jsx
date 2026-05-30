@@ -28,7 +28,7 @@ function PrinterCard({ printer }) {
         <div className="flex items-center gap-2">
           <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
             printing ? 'bg-[#FF2300] animate-pulse' :
-            ['FINISHED','IDLE','READY'].includes(state) ? 'bg-emerald-400' :
+            ['FINISHED','IDLE','READY','UNKNOWN'].includes(state) ? 'bg-emerald-400' :
             state === 'OFFLINE' ? 'bg-slate-600' : 'bg-amber-400'
           }`} />
           <span className="text-white font-semibold text-sm">{printer.name}</span>
@@ -37,7 +37,7 @@ function PrinterCard({ printer }) {
           {online ? <Wifi size={11} className="text-slate-600" /> : <WifiOff size={11} className="text-slate-600" />}
           <span className={`text-xs font-medium ${
             printing ? 'text-[#FF2300]' :
-            ['FINISHED','IDLE','READY'].includes(state) ? 'text-emerald-400' :
+            ['FINISHED','IDLE','READY','UNKNOWN'].includes(state) ? 'text-emerald-400' :
             state === 'OFFLINE' ? 'text-slate-600' : 'text-amber-400'
           }`}>
             {STATE_LABELS[state] || state}
