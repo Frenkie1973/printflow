@@ -53,7 +53,7 @@ function PrinterBlock({ printer, liveStatus, orders, onNewOrder, onFailed }) {
         <span className={`text-xs font-medium ${
           printing ? 'text-[#FF2300]' :
           ['IDLE','READY','FINISHED'].includes(state) ? 'text-emerald-400' :
-          'text-slate-500'
+          'text-slate-400'
         } text-sm font-medium`}>{STATE_LABELS[state] || state}</span>
       </div>
 
@@ -71,7 +71,7 @@ function PrinterBlock({ printer, liveStatus, orders, onNewOrder, onFailed }) {
               <div className="h-1.5 rounded-full transition-all" style={{width:`${liveStatus.progress||0}%`,backgroundColor:'#FF2300'}} />
             </div>
           </div>
-          <div className="flex items-center justify-between text-xs text-slate-500">
+          <div className="flex items-center justify-between text-xs text-slate-400">
             <span className="flex items-center gap-1">
               <Clock size={10} />{formatTime(liveStatus.time_remaining)} resterend
             </span>
@@ -82,7 +82,7 @@ function PrinterBlock({ printer, liveStatus, orders, onNewOrder, onFailed }) {
             )}
           </div>
           {(liveStatus.temp_nozzle > 0 || liveStatus.temp_bed > 0) && (
-            <div className="flex gap-4 text-sm text-slate-500">
+            <div className="flex gap-4 text-sm text-slate-400">
               <span className="flex items-center gap-1"><Thermometer size={10} className="text-red-400" />{Math.round(liveStatus.temp_nozzle)}°C</span>
               <span className="flex items-center gap-1"><Thermometer size={10} className="text-amber-400" />{Math.round(liveStatus.temp_bed)}°C bed</span>
             </div>
@@ -97,7 +97,7 @@ function PrinterBlock({ printer, liveStatus, orders, onNewOrder, onFailed }) {
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 {activeOrder.article_number && (
-                  <span className="text-slate-500 text-xs">{activeOrder.article_number}</span>
+                  <span className="text-slate-400 text-xs">{activeOrder.article_number}</span>
                 )}
                 {(() => { const dl = deadlineLabel(activeOrder.deadline); return dl ? <span className={`text-xs ${dl.color}`}>{dl.text}</span> : null })()}
               </div>
@@ -122,20 +122,20 @@ function PrinterBlock({ printer, liveStatus, orders, onNewOrder, onFailed }) {
             const dl = deadlineLabel(order.deadline)
             return (
               <div key={order.id} className="px-4 py-2.5 flex items-center gap-3">
-                <span className="text-slate-600 text-xs w-4">{idx + 1}</span>
+                <span className="text-slate-500 text-xs w-4">{idx + 1}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-slate-200 text-sm font-medium truncate">{order.order_name}</span>
                     {dl && <span className={`text-xs ${dl.color} flex-shrink-0`}>{dl.text}</span>}
                   </div>
-                  <div className="text-slate-500 text-sm">{order.quantity}× {order.material} {order.color && `— ${order.color}`}</div>
+                  <div className="text-slate-400 text-sm">{order.quantity}× {order.material} {order.color && `— ${order.color}`}</div>
                 </div>
-                <span className="text-slate-500 text-sm flex-shrink-0">{order.print_hours}u{order.print_minutes > 0 ? order.print_minutes + 'm' : ''}</span>
+                <span className="text-slate-400 text-sm flex-shrink-0">{order.print_hours}u{order.print_minutes > 0 ? order.print_minutes + 'm' : ''}</span>
               </div>
             )
           })}
           {queueOrders.length > 3 && (
-            <div className="px-4 py-2 text-slate-600 text-xs">+{queueOrders.length - 3} meer in wachtrij</div>
+            <div className="px-4 py-2 text-slate-500 text-xs">+{queueOrders.length - 3} meer in wachtrij</div>
           )}
         </div>
       )}
@@ -201,7 +201,7 @@ export default function Dashboard() {
 
         {/* Printer blokken */}
         <div>
-          <p className="text-slate-600 text-xs uppercase tracking-wider font-medium mb-3 flex items-center gap-1.5">
+          <p className="text-slate-500 text-xs uppercase tracking-wider font-medium mb-3 flex items-center gap-1.5">
             <span className="text-[#FF2300]">↯</span> Printer overzicht
           </p>
           <div className="grid grid-cols-1 gap-3">
@@ -240,7 +240,7 @@ export default function Dashboard() {
         {/* Printorders overzicht */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <p className="text-slate-600 text-xs uppercase tracking-wider font-medium">Printorders</p>
+            <p className="text-slate-500 text-xs uppercase tracking-wider font-medium">Printorders</p>
             <button onClick={() => setShowForm(true)}
               className="flex items-center gap-1.5 text-white text-sm font-medium px-3 py-1.5 rounded-lg transition-colors"
               style={{backgroundColor:'#FF2300'}}>
@@ -251,7 +251,7 @@ export default function Dashboard() {
           {/* Zoek + filter */}
           <div className="space-y-2 mb-3">
             <div className="relative">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input value={search} onChange={e => setSearch(e.target.value)}
                 placeholder="Zoek op naam of artikelnummer..."
                 className="w-full bg-slate-900 border border-slate-800 rounded-lg pl-8 pr-3 py-2 text-white text-sm placeholder-slate-500 focus:outline-none" />
@@ -260,7 +260,7 @@ export default function Dashboard() {
               {STATUS_FILTERS.map(f => (
                 <button key={f.key} onClick={() => setStatusFilter(f.key)}
                   className={`text-xs px-2.5 py-1 rounded-full transition-colors ${
-                    statusFilter === f.key ? 'text-white font-medium' : 'text-slate-500 bg-slate-900 hover:text-white'
+                    statusFilter === f.key ? 'text-white font-medium' : 'text-slate-400 bg-slate-900 hover:text-white'
                   }`}
                   style={statusFilter === f.key ? {backgroundColor:'#FF2300'} : {}}>
                   {f.label}
@@ -272,7 +272,7 @@ export default function Dashboard() {
           {/* Orders lijst */}
           <div className="space-y-2">
             {filteredOrders.length === 0 && (
-              <div className="text-center py-10 text-slate-600">Geen orders gevonden</div>
+              <div className="text-center py-10 text-slate-500">Geen orders gevonden</div>
             )}
             {filteredOrders.map(order => {
               const dl = deadlineLabel(order.deadline)
@@ -294,7 +294,7 @@ export default function Dashboard() {
                         style={order.status === 'printing' ? {backgroundColor:'#FF2300'} : {}}>
                         {STATUS_NL[order.status] || order.status}
                       </span>
-                      {order.article_number && <span className="text-slate-500 text-xs">{order.article_number}</span>}
+                      {order.article_number && <span className="text-slate-400 text-xs">{order.article_number}</span>}
                       {dl && <span className={`text-xs ${dl.color}`}>{dl.text}</span>}
                     </div>
                     <div className="text-white font-semibold text-base mt-0.5 truncate">{order.order_name}</div>
