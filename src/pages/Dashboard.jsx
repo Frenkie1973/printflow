@@ -47,14 +47,14 @@ function PrinterBlock({ printer, liveStatus, orders, onNewOrder, onFailed }) {
             ['IDLE','READY','FINISHED'].includes(state) ? 'bg-emerald-400' :
             state === 'OFFLINE' ? 'bg-slate-700' : 'bg-amber-400'
           }`} />
-          <span className="text-white font-bold text-sm">{printer.name}</span>
+          <span className="text-white font-bold text-base">{printer.name}</span>
           {online ? <Wifi size={11} className="text-slate-700" /> : <WifiOff size={11} className="text-slate-700" />}
         </div>
         <span className={`text-xs font-medium ${
           printing ? 'text-[#FF2300]' :
           ['IDLE','READY','FINISHED'].includes(state) ? 'text-emerald-400' :
           'text-slate-500'
-        }`}>{STATE_LABELS[state] || state}</span>
+        } text-sm font-medium`}>{STATE_LABELS[state] || state}</span>
       </div>
 
       {/* Live print voortgang */}
@@ -62,7 +62,7 @@ function PrinterBlock({ printer, liveStatus, orders, onNewOrder, onFailed }) {
         <div className="px-4 pb-3 space-y-2 border-b border-zinc-900">
           <div>
             <div className="flex justify-between items-center mb-1">
-              <span className="text-slate-500 text-xs truncate max-w-[70%]">
+              <span className="text-slate-400 text-sm truncate max-w-[70%]">
                 {liveStatus.filename?.replace(/\.bgcode$|\.gcode$/i, '')}
               </span>
               <span className="text-white text-xs font-mono font-bold">{Math.round(liveStatus.progress || 0)}%</span>
@@ -77,12 +77,12 @@ function PrinterBlock({ printer, liveStatus, orders, onNewOrder, onFailed }) {
             </span>
             {liveStatus.time_remaining > 0 && (
               <span className="text-slate-400 font-medium">
-                klaar om {new Date(Date.now() + liveStatus.time_remaining * 1000).toLocaleTimeString('nl-NL', {hour:'2-digit',minute:'2-digit'})}
+                <span className="text-sm font-medium">klaar om {new Date(Date.now() + liveStatus.time_remaining * 1000).toLocaleTimeString('nl-NL', {hour:'2-digit',minute:'2-digit'})}</span>
               </span>
             )}
           </div>
           {(liveStatus.temp_nozzle > 0 || liveStatus.temp_bed > 0) && (
-            <div className="flex gap-4 text-xs text-slate-600">
+            <div className="flex gap-4 text-sm text-slate-500">
               <span className="flex items-center gap-1"><Thermometer size={10} className="text-red-400" />{Math.round(liveStatus.temp_nozzle)}°C</span>
               <span className="flex items-center gap-1"><Thermometer size={10} className="text-amber-400" />{Math.round(liveStatus.temp_bed)}°C bed</span>
             </div>
@@ -101,14 +101,14 @@ function PrinterBlock({ printer, liveStatus, orders, onNewOrder, onFailed }) {
                 )}
                 {(() => { const dl = deadlineLabel(activeOrder.deadline); return dl ? <span className={`text-xs ${dl.color}`}>{dl.text}</span> : null })()}
               </div>
-              <div className="text-white font-semibold text-sm mt-0.5">{activeOrder.order_name}</div>
-              <div className="flex gap-3 mt-1 text-xs text-slate-500 flex-wrap">
+              <div className="text-white font-bold text-base mt-0.5">{activeOrder.order_name}</div>
+              <div className="flex gap-3 mt-1 text-sm text-slate-400 flex-wrap">
                 {activeOrder.quantity && <span>{activeOrder.quantity}× {activeOrder.material}</span>}
                 {activeOrder.color && <span>{activeOrder.color}</span>}
               </div>
             </div>
             <button onClick={() => onFailed(activeOrder.id)}
-              className="flex-shrink-0 flex items-center gap-1 text-xs text-red-400 border border-red-900 px-2.5 py-1 rounded-lg hover:bg-red-900/20 transition-colors">
+              className="flex-shrink-0 flex items-center gap-1 text-sm text-red-400 border border-red-900 px-3 py-1.5 rounded-lg hover:bg-red-900/20 transition-colors">
               Mislukt
             </button>
           </div>
@@ -125,12 +125,12 @@ function PrinterBlock({ printer, liveStatus, orders, onNewOrder, onFailed }) {
                 <span className="text-slate-600 text-xs w-4">{idx + 1}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-slate-300 text-xs font-medium truncate">{order.order_name}</span>
+                    <span className="text-slate-200 text-sm font-medium truncate">{order.order_name}</span>
                     {dl && <span className={`text-xs ${dl.color} flex-shrink-0`}>{dl.text}</span>}
                   </div>
-                  <div className="text-slate-600 text-xs">{order.quantity}× {order.material} {order.color && `— ${order.color}`}</div>
+                  <div className="text-slate-500 text-sm">{order.quantity}× {order.material} {order.color && `— ${order.color}`}</div>
                 </div>
-                <span className="text-slate-600 text-xs flex-shrink-0">{order.print_hours}u{order.print_minutes > 0 ? order.print_minutes + 'm' : ''}</span>
+                <span className="text-slate-500 text-sm flex-shrink-0">{order.print_hours}u{order.print_minutes > 0 ? order.print_minutes + 'm' : ''}</span>
               </div>
             )
           })}
@@ -287,7 +287,7 @@ export default function Dashboard() {
               }
               const STATUS_NL = { new:'Nieuw', preparing:'Voorbereiden', printing:'Aan het printen', done:'Klaar', failed:'Mislukt', cancelled:'Geannuleerd' }
               return (
-                <div key={order.id} className="bg-zinc-950 border border-zinc-900 rounded-xl px-4 py-3 flex items-center gap-3">
+                <div key={order.id} className="bg-zinc-950 border border-zinc-900 rounded-xl px-4 py-4 flex items-center gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLORS[order.status] || ''}`}
@@ -297,8 +297,8 @@ export default function Dashboard() {
                       {order.article_number && <span className="text-slate-500 text-xs">{order.article_number}</span>}
                       {dl && <span className={`text-xs ${dl.color}`}>{dl.text}</span>}
                     </div>
-                    <div className="text-white font-semibold text-sm mt-0.5 truncate">{order.order_name}</div>
-                    <div className="flex gap-3 mt-0.5 text-xs text-slate-500 flex-wrap">
+                    <div className="text-white font-semibold text-base mt-0.5 truncate">{order.order_name}</div>
+                    <div className="flex gap-3 mt-0.5 text-sm text-slate-400 flex-wrap">
                       {printer && <span>{printer.name}</span>}
                       {order.quantity && <span>{order.quantity}× {order.material}</span>}
                       {order.color && <span>{order.color}</span>}
@@ -307,12 +307,12 @@ export default function Dashboard() {
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {order.status === 'printing' && (
                       <button onClick={() => handleFailed(order.id)}
-                        className="text-xs text-red-400 border border-red-900 px-2 py-1 rounded-lg hover:bg-red-900/20">
+                        className="text-sm text-red-400 border border-red-900 px-3 py-1.5 rounded-lg hover:bg-red-900/20">
                         Mislukt
                       </button>
                     )}
                     <button onClick={() => setEditingOrder(order)}
-                      className="text-xs text-slate-500 border border-slate-800 px-2 py-1 rounded-lg hover:text-white hover:border-slate-600">
+                      className="text-sm text-slate-400 border border-slate-700 px-3 py-1.5 rounded-lg hover:text-white hover:border-slate-500">
                       Bewerken
                     </button>
                   </div>
