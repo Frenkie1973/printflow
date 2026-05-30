@@ -65,8 +65,10 @@ export default function OrderCard({ order, onRefresh }) {
   }
 
   const printerStatus = usePrinterStatus()
+  // Zoek de printer naam die bij de order hoort
+  const orderPrinter = printers.find(p => p.id === order.printer_id)
   const activePrinter = printerStatus.find(p => 
-    p.id === order.printer_id && p.state === 'PRINTING' && p.time_remaining > 0
+    p.name === orderPrinter?.name && p.state === 'PRINTING' && p.time_remaining > 0
   )
   // Gebruik printer tijd als die beschikbaar is, anders eigen countdown
   const printerEndTime = activePrinter 
