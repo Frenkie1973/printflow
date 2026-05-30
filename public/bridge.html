@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>PrintFlow Bridge</title>
+<style>
+  body { font-family: monospace; background: #0a0a0a; color: #eee; padding: 20px; margin: 0; }
+  h1 { color: #FF2300; font-size: 18px; }
+  .status { background: #111; border-radius: 8px; padding: 12px; margin: 8px 0; border: 1px solid #222; }
+  .online { border-color: #FF2300; }
+  .state { font-weight: bold; color: #FF2300; }
+  .idle { color: #4ade80; }
+  .offline { color: #555; }
+  .log { background: #111; border-radius: 8px; padding: 12px; margin-top: 16px; max-height: 200px; overflow-y: auto; font-size: 12px; color: #555; }
+  .log p { margin: 2px 0; }
+  small { color: #444; }
+</style>
+</head>
+<body>
+<h1>🖨️ PrintFlow Bridge</h1>
+<p style="color:#555;font-size:13px">Laat dit tabblad open — data wordt elke 30 seconden naar Firebase gestuurd</p>
+<div id="printers"></div>
+<div class="log" id="log"></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+import { getFirestore, doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAvBuf8ror-A3nxldKLfv3KXzKnp-wSdwA",
+  authDomain: "printflow-5e2e0.firebaseapp.com",
+  projectId: "printflow-5e2e0",
+  storageBucket: "printflow-5e2e0.appspot.com",
+  messagingSenderId: "406756542595",
+  appId: "1:406756542595:web:8907726cc02172c62873b6"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const PRINTERS = [
+  { id: 'prusa-xl',       name: 'Prusa XL',       ip: '192.168.47.43', key: 'BTnPBZ2zZf9ENHJ' },
+  { id: 'prusa-core-one', name: 'Prusa Core One',  ip: '192.168.47.72', key: '2QxgXZaeN3NjVGJ' },
+];
+
+const STATE_NL = { PRINTING:'Aan het printen', IDLE:'Vrij', FINISHED:'Klaar', ERROR:'Fout', OFFLINE:'Offline', READY:'Klaar', PAUSED:'Gepauzeerd' };
+
+function log(msg) {
+  const el = document.getElementById('log');
+  const p = document.createElement('p');
+  p.textContent = new Date().toLocaleTimeString('nl-NL') + ' — ' + msg;
+  el.prepend(p);
+  while (el.children.length > 50) el.removeChild(el.lastChild);
+}
+
+async function fetchPrinter(p) {
+  const headers = { 'X-Api-Key': p.key };
+  const [sRes, jRes] = await Promise.all([
+    fetch(`http://${p.ip}/api/v1/status`, { headers }),
+    fetch(`http://${p.ip}/api/v1/job`,    { headers }),
+  ]);
+  const status = await sRes.json();
+  const job    = jRes.ok ? await jRes.json() : {};
+  return {
+    online: true,
+    state:         status.printer?.state || 'UNKNOWN',
+    temp_nozzle:   status.printer?.temp_nozzle   || 0,
+    temp_bed:      status.printer?.temp_bed      || 0,
+    target_nozzle: status.printer?.target_nozzle || 0,
+    target_bed:    status.printer?.target_bed    || 0,
+    progress:      job.progress || 0,
+    filename:      job.file?.display_name || job.file?.name || '',
+    time_remaining: job.time_remaining || null,
+  };
+}
+
+function renderPrinter(p, data) {
+  const state = data?.state || 'OFFLINE';
+  const printing = state === 'PRINTING';
+  const div = document.getElementById('p-' + p.id) || document.createElement('div');
+  div.id = 'p-' + p.id;
+  div.className = 'status ' + (printing ? 'online' : data?.online ? '' : 'offline');
+  div.innerHTML = `
+    <b>${p.name}</b> &nbsp;
+    <span class="state ${['IDLE','READY','FINISHED'].includes(state)?'idle':state==='OFFLINE'?'offline':''}">${STATE_NL[state]||state}</span>
+    ${printing ? `<br><small>${data.filename}</small> &nbsp; <b>${Math.round(data.progress)}%</b>` : ''}
+    ${data?.temp_nozzle > 0 ? `<br><small>Nozzle ${Math.round(data.temp_nozzle)}°C &nbsp; Bed ${Math.round(data.temp_bed)}°C</small>` : ''}
+  `;
+  document.getElementById('printers').appendChild(div);
+}
+
+async function update() {
+  for (const p of PRINTERS) {
+    let data;
+    try {
+      data = await fetchPrinter(p);
+      log(`✓ ${p.name}: ${data.state}${data.state==='PRINTING'?' ('+Math.round(data.progress)+'%)':''}`);
+    } catch (e) {
+      data = { online: false, state: 'OFFLINE', error: e.message };
+      log(`✗ ${p.name}: offline (${e.message.substring(0,40)})`);
+    }
+    renderPrinter(p, data);
+    try {
+      await setDoc(doc(db, 'printer_status', p.id), {
+        ...data, name: p.name, updated_at: serverTimestamp()
+      });
+    } catch (e) {
+      log(`Firebase fout: ${e.message}`);
+    }
+  }
+}
+
+// Start direct en daarna elke 30 seconden
+update();
+setInterval(update, 30000);
+</script>
+</body>
+</html>
