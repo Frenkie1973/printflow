@@ -203,7 +203,7 @@ export default function Dashboard() {
           <p className="text-slate-600 text-xs uppercase tracking-wider font-medium mb-3 flex items-center gap-1.5">
             <span className="text-[#FF2300]">↯</span> Printer overzicht
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3">
             {printers.map(printer => (
               <PrinterBlock
                 key={printer.id}
