@@ -54,9 +54,14 @@ function PrinterCard({ printer }) {
           <div className="w-full bg-slate-800 rounded-full h-1.5">
             <div className="h-1.5 rounded-full transition-all" style={{width:`${printer.progress||0}%`,backgroundColor:'#FF2300'}} />
           </div>
-          {printer.time_remaining && (
-            <div className="flex items-center gap-1 mt-1.5 text-xs text-slate-500">
-              <Clock size={10} />{formatTime(printer.time_remaining)} resterend
+          {printer.time_remaining > 0 && (
+            <div className="flex items-center justify-between mt-1.5 text-xs text-slate-500">
+              <span className="flex items-center gap-1">
+                <Clock size={10} />{formatTime(printer.time_remaining)} resterend
+              </span>
+              <span className="text-slate-400 font-medium">
+                klaar om {new Date(Date.now() + printer.time_remaining * 1000).toLocaleTimeString('nl-NL', {hour:'2-digit', minute:'2-digit'})}
+              </span>
             </div>
           )}
         </div>
