@@ -1,72 +1,107 @@
 import { useEffect, useState } from 'react'
-import { fetchPrusaPrinters } from '../lib/prusaConnect'
-import { Thermometer, Clock, Layers, AlertTriangle, Loader } from 'lucide-react'
+import { Thermometer, Clock, Layers, AlertTriangle, Loader, Wifi, WifiOff } from 'lucide-react'
 
-const PRUSA_USER = 'frankq-line'
-const PRUSA_PASS = 'gYscam-fudbyv-cofke9'
+const PRINTERS = [
+  { name: 'Prusa XL',      ip: '192.168.47.43', key: 'BTnPBZ2zZf9ENHJ' },
+  { name: 'Prusa Core One', ip: '192.168.47.72', key: '2QxgXZaeN3NjVGJ' },
+]
 
-const PRINTER_UUID_MAP = {
-  'c0f5aae5-561c-4811-9e73-71979656b828': 'Prusa XL',
-  '046d8759-174c-4a69-847c-cc4e3f881200': 'Prusa Core One',
-}
-
-const STATE_COLORS = {
-  PRINTING: 'text-[#FF2300]', IDLE: 'text-emerald-400',
-  FINISHED: 'text-emerald-400', ERROR: 'text-red-400',
-  ATTENTION: 'text-amber-400', OFFLINE: 'text-slate-600', PAUSED: 'text-amber-400',
-}
 const STATE_LABELS = {
   PRINTING: 'Aan het printen', IDLE: 'Vrij', FINISHED: 'Klaar',
-  ERROR: 'Fout', ATTENTION: 'Aandacht vereist', OFFLINE: 'Offline', PAUSED: 'Gepauzeerd',
+  ERROR: 'Fout', ATTENTION: 'Aandacht vereist', OFFLINE: 'Offline',
+  PAUSED: 'Gepauzeerd', READY: 'Klaar voor gebruik',
 }
 
 function formatTime(s) {
-  if (!s) return '-'
+  if (!s) return null
   const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60)
   return h > 0 ? `${h}u ${m}m` : `${m}m`
 }
 
+async function fetchPrinter(printer) {
+  const base = `http://${printer.ip}`
+  const headers = { 'X-Api-Key': printer.key }
+  const [statusRes, jobRes] = await Promise.all([
+    fetch(`${base}/api/v1/status`, { headers }),
+    fetch(`${base}/api/v1/job`, { headers }),
+  ])
+  const status = await statusRes.json()
+  const job = jobRes.ok ? await jobRes.json() : null
+  return { status, job }
+}
+
 function PrinterCard({ printer }) {
-  const name = PRINTER_UUID_MAP[printer.uuid] || printer.name || printer.printer_model
-  const state = printer.printer_state || 'OFFLINE'
-  const job = printer.job_info
-  const temp = printer.temp
+  const [data, setData] = useState(null)
+  const [offline, setOffline] = useState(false)
+  const [loading, setLoading] = useState(true)
+
+  const load = async () => {
+    try {
+      const d = await fetchPrinter(printer)
+      setData(d)
+      setOffline(false)
+    } catch {
+      setOffline(true)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    load()
+    const t = setInterval(load, 15000)
+    return () => clearInterval(t)
+  }, [])
+
+  const state = data?.status?.printer?.state || (offline ? 'OFFLINE' : 'IDLE')
+  const printing = state === 'PRINTING'
+  const job = data?.job
+  const temp = data?.status?.printer
 
   return (
-    <div className="bg-zinc-950 border border-zinc-900 rounded-xl p-4 space-y-3">
+    <div className={`bg-zinc-950 border rounded-xl p-4 space-y-3 transition-colors ${
+      printing ? 'border-[#FF2300]/40' : offline ? 'border-zinc-800 opacity-60' : 'border-zinc-900'
+    }`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
-            state === 'PRINTING' ? 'bg-[#FF2300] animate-pulse' :
-            state === 'IDLE' || state === 'FINISHED' ? 'bg-emerald-400' :
-            'bg-amber-400'}`} />
-          <span className="text-white font-semibold text-sm">{name}</span>
+            printing ? 'bg-[#FF2300] animate-pulse' :
+            state === 'FINISHED' || state === 'IDLE' || state === 'READY' ? 'bg-emerald-400' :
+            state === 'OFFLINE' ? 'bg-slate-600' : 'bg-amber-400'
+          }`} />
+          <span className="text-white font-semibold text-sm">{printer.name}</span>
         </div>
-        <span className={`text-xs font-medium ${STATE_COLORS[state] || 'text-slate-500'}`}>
-          {STATE_LABELS[state] || state}
-        </span>
+        <div className="flex items-center gap-2">
+          {offline ? <WifiOff size={12} className="text-slate-600" /> : <Wifi size={12} className="text-slate-600" />}
+          <span className={`text-xs font-medium ${
+            printing ? 'text-[#FF2300]' :
+            state === 'FINISHED' || state === 'IDLE' || state === 'READY' ? 'text-emerald-400' :
+            state === 'OFFLINE' ? 'text-slate-600' : 'text-amber-400'
+          }`}>
+            {loading ? '...' : STATE_LABELS[state] || state}
+          </span>
+        </div>
       </div>
 
-      {job && state === 'PRINTING' && (
+      {printing && job && (
         <>
           <div>
             <div className="flex items-center justify-between mb-1">
               <span className="text-slate-500 text-xs truncate max-w-[60%]">
-                {job.display_name?.replace(/\.bgcode$/, '').replace(/\.gcode$/, '')}
+                {job.file?.display_name || job.file?.name || 'Bezig...'}
               </span>
-              <span className="text-white text-xs font-mono">{job.progress}%</span>
+              <span className="text-white text-xs font-mono font-bold">
+                {Math.round(job.progress || 0)}%
+              </span>
             </div>
             <div className="w-full bg-slate-800 rounded-full h-1.5">
-              <div className="h-1.5 rounded-full transition-all" style={{width: `${job.progress}%`, backgroundColor:'#FF2300'}} />
+              <div className="h-1.5 rounded-full transition-all" style={{width:`${job.progress||0}%`,backgroundColor:'#FF2300'}} />
             </div>
           </div>
           <div className="flex items-center gap-4 text-xs text-slate-500">
-            <span className="flex items-center gap-1">
-              <Clock size={10} />{formatTime(job.time_remaining)} resterend
-            </span>
-            {job.model_weight && (
+            {job.time_remaining != null && (
               <span className="flex items-center gap-1">
-                <Layers size={10} />{Math.round(job.weight_remaining || 0)}g resterend
+                <Clock size={10} />{formatTime(job.time_remaining)} resterend
               </span>
             )}
           </div>
@@ -77,11 +112,11 @@ function PrinterCard({ printer }) {
         <div className="flex items-center gap-4 text-xs text-slate-500 border-t border-zinc-900 pt-2">
           <span className="flex items-center gap-1">
             <Thermometer size={10} className="text-red-400" />
-            Nozzle: <span className="text-slate-300">{temp.temp_nozzle}°C</span>
+            Nozzle: <span className="text-slate-300">{Math.round(temp.temp_nozzle)}°C</span>
           </span>
           <span className="flex items-center gap-1">
             <Thermometer size={10} className="text-amber-400" />
-            Bed: <span className="text-slate-300">{temp.temp_bed}°C</span>
+            Bed: <span className="text-slate-300">{Math.round(temp.temp_bed)}°C</span>
           </span>
         </div>
       )}
@@ -90,49 +125,9 @@ function PrinterCard({ printer }) {
 }
 
 export default function PrinterStatusLive() {
-  const [printers, setPrinters] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [lastUpdate, setLastUpdate] = useState(null)
-
-  const load = async () => {
-    try {
-      const data = await fetchPrusaPrinters(PRUSA_USER, PRUSA_PASS)
-      setPrinters(data.printers || [])
-      setLastUpdate(new Date())
-      setError(null)
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    load()
-    const interval = setInterval(load, 30000)
-    return () => clearInterval(interval)
-  }, [])
-
-  if (loading) return (
-    <div className="flex items-center gap-2 text-slate-600 text-sm py-2">
-      <Loader size={14} className="animate-spin" />Printers ophalen…
-    </div>
-  )
-  if (error) return (
-    <div className="text-amber-500 text-xs flex items-center gap-1.5 py-2">
-      <AlertTriangle size={12} />Prusa Connect: {error}
-    </div>
-  )
-
   return (
     <div className="space-y-2">
-      {printers.map(p => <PrinterCard key={p.uuid} printer={p} />)}
-      {lastUpdate && (
-        <p className="text-slate-700 text-xs text-right">
-          Bijgewerkt: {lastUpdate.toLocaleTimeString('nl-NL')}
-        </p>
-      )}
+      {PRINTERS.map(p => <PrinterCard key={p.ip} printer={p} />)}
     </div>
   )
 }
