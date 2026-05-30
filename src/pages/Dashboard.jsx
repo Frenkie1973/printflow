@@ -154,6 +154,7 @@ export default function Dashboard() {
   const printers = usePrinters()
   const printerStatus = usePrinterStatus()
   const [showForm, setShowForm] = useState(false)
+  const [editingOrder, setEditingOrder] = useState(null)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
 
@@ -303,12 +304,18 @@ export default function Dashboard() {
                       {order.color && <span>{order.color}</span>}
                     </div>
                   </div>
-                  {order.status === 'printing' && (
-                    <button onClick={() => handleFailed(order.id)}
-                      className="flex-shrink-0 text-xs text-red-400 border border-red-900 px-2 py-1 rounded-lg hover:bg-red-900/20">
-                      Mislukt
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {order.status === 'printing' && (
+                      <button onClick={() => handleFailed(order.id)}
+                        className="text-xs text-red-400 border border-red-900 px-2 py-1 rounded-lg hover:bg-red-900/20">
+                        Mislukt
+                      </button>
+                    )}
+                    <button onClick={() => setEditingOrder(order)}
+                      className="text-xs text-slate-500 border border-slate-800 px-2 py-1 rounded-lg hover:text-white hover:border-slate-600">
+                      Bewerken
                     </button>
-                  )}
+                  </div>
                 </div>
               )
             })}
@@ -318,6 +325,7 @@ export default function Dashboard() {
       </div>
 
       {showForm && <OrderForm onClose={() => setShowForm(false)} />}
+      {editingOrder && <OrderForm order={editingOrder} onClose={() => setEditingOrder(null)} />}
     </div>
   )
 }
