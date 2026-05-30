@@ -38,11 +38,11 @@ function MaintenanceSection({ printer, totalHours }) {
   return (
     <div className="mt-4 border-t border-zinc-900 pt-4 space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-slate-500 text-xs uppercase tracking-wide font-medium flex items-center gap-1.5">
+        <span className="text-slate-400 text-xs uppercase tracking-wide font-medium flex items-center gap-1.5">
           <Wrench size={11} />Onderhoud
         </span>
         <button onClick={() => setShowAddTask(!showAddTask)}
-          className="text-xs flex items-center gap-1 text-slate-500 hover:text-white transition-colors">
+          className="text-xs flex items-center gap-1 text-slate-400 hover:text-white transition-colors">
           <Plus size={12} />Taak toevoegen
         </button>
       </div>
@@ -63,18 +63,18 @@ function MaintenanceSection({ printer, totalHours }) {
                 <div className="flex items-center gap-2 mb-1">
                   {due && <AlertTriangle size={12} className="text-red-400 flex-shrink-0" />}
                   <span className={`text-sm font-medium ${due ? 'text-red-300' : 'text-white'}`}>{task.name}</span>
-                  <span className="text-xs text-slate-600">elke {task.interval_hours}u</span>
+                  <span className="text-xs text-slate-500">elke {task.interval_hours}u</span>
                 </div>
-                {task.description && <p className="text-slate-500 text-xs mb-2">{task.description}</p>}
+                {task.description && <p className="text-slate-400 text-xs mb-2">{task.description}</p>}
                 <div className="flex items-center gap-2">
                   <div className="flex-1 bg-slate-800 rounded-full h-1.5">
                     <div className={`h-1.5 rounded-full transition-all ${due ? 'bg-red-500' : warn ? 'bg-amber-500' : 'bg-emerald-500'}`}
                       style={{width: `${pct}%`}} />
                   </div>
-                  <span className="text-xs text-slate-500 whitespace-nowrap">{Math.round(hrs)}u / {task.interval_hours}u</span>
+                  <span className="text-xs text-slate-400 whitespace-nowrap">{Math.round(hrs)}u / {task.interval_hours}u</span>
                 </div>
                 {task.last_done_at && (
-                  <p className="text-slate-600 text-xs mt-1">
+                  <p className="text-slate-500 text-xs mt-1">
                     Laatst: {new Date(task.last_done_at).toLocaleDateString('nl-NL')}
                   </p>
                 )}
@@ -97,19 +97,19 @@ function MaintenanceSection({ printer, totalHours }) {
         <form onSubmit={saveTask} className="bg-zinc-950 border border-zinc-800 rounded-lg p-3 space-y-3">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-slate-500 text-xs mb-1">Taaknaam *</label>
+              <label className="block text-slate-400 text-xs mb-1">Taaknaam *</label>
               <input required value={newTask.name} onChange={e => setNewTask({...newTask, name: e.target.value})}
                 placeholder="bijv. Nozzle reinigen"
                 className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-white text-xs focus:outline-none placeholder-slate-600" />
             </div>
             <div>
-              <label className="block text-slate-500 text-xs mb-1">Interval (uren)</label>
+              <label className="block text-slate-400 text-xs mb-1">Interval (uren)</label>
               <input type="number" min="1" value={newTask.interval_hours} onChange={e => setNewTask({...newTask, interval_hours: e.target.value})}
                 className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-white text-xs focus:outline-none" />
             </div>
           </div>
           <div>
-            <label className="block text-slate-500 text-xs mb-1">Omschrijving</label>
+            <label className="block text-slate-400 text-xs mb-1">Omschrijving</label>
             <input value={newTask.description} onChange={e => setNewTask({...newTask, description: e.target.value})}
               placeholder="Wat moet er gedaan worden?"
               className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-white text-xs focus:outline-none placeholder-slate-600" />
@@ -121,7 +121,7 @@ function MaintenanceSection({ printer, totalHours }) {
               {saving ? 'Opslaan…' : 'Toevoegen'}
             </button>
             <button type="button" onClick={() => setShowAddTask(false)}
-              className="text-xs text-slate-500 hover:text-white px-3 py-1.5 rounded-lg bg-slate-800">
+              className="text-xs text-slate-400 hover:text-white px-3 py-1.5 rounded-lg bg-slate-800">
               Annuleren
             </button>
           </div>
@@ -178,17 +178,19 @@ export default function PrintersPage() {
 
       <div className="bg-zinc-950 border border-zinc-900 rounded-xl p-4 mb-6">
         <h2 className="text-slate-400 text-xs uppercase tracking-wide font-medium mb-3">Printer toevoegen</h2>
-        <div className="flex gap-2">
+        <div className="space-y-2">
           <input value={newName} onChange={e => setNewName(e.target.value)} onKeyDown={e => e.key === 'Enter' && add()}
             placeholder="Naam (bv. Prusa XL)"
-            className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white placeholder-slate-500 focus:outline-none text-sm" />
-          <input value={newDesc} onChange={e => setNewDesc(e.target.value)} placeholder="Omschrijving (optioneel)"
-            className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white placeholder-slate-500 focus:outline-none text-sm" />
-          <button onClick={add} disabled={loading || !newName.trim()}
-            className="disabled:opacity-50 text-white px-3 py-2 rounded-lg transition-colors"
-            style={{backgroundColor:'#FF2300'}}>
-            <Plus size={16} />
-          </button>
+            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white placeholder-slate-400 focus:outline-none text-sm" />
+          <div className="flex gap-2">
+            <input value={newDesc} onChange={e => setNewDesc(e.target.value)} placeholder="Omschrijving (optioneel)"
+              className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-white placeholder-slate-400 focus:outline-none text-sm" />
+            <button onClick={add} disabled={loading || !newName.trim()}
+              className="disabled:opacity-50 text-white px-4 py-2.5 rounded-lg transition-colors flex-shrink-0"
+              style={{backgroundColor:'#FF2300'}}>
+              <Plus size={16} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -210,8 +212,8 @@ export default function PrintersPage() {
                 ) : (
                   <div className="flex-1 min-w-0">
                     <div className="text-white text-sm font-medium">{p.name}</div>
-                    {p.description && <div className="text-slate-500 text-xs">{p.description}</div>}
-                    <div className="flex items-center gap-1 mt-1 text-slate-600 text-xs">
+                    {p.description && <div className="text-slate-400 text-xs">{p.description}</div>}
+                    <div className="flex items-center gap-1 mt-1 text-slate-500 text-xs">
                       <Clock size={10} />{Math.round(totalHours * 10) / 10} printuren totaal
                     </div>
                   </div>
@@ -220,17 +222,17 @@ export default function PrintersPage() {
                   {editId === p.id ? (
                     <>
                       <button onClick={() => save(p.id)} className="text-emerald-400 hover:text-emerald-300 p-1"><Check size={15} /></button>
-                      <button onClick={() => setEditId(null)} className="text-slate-500 hover:text-slate-300 p-1"><X size={15} /></button>
+                      <button onClick={() => setEditId(null)} className="text-slate-400 hover:text-slate-300 p-1"><X size={15} /></button>
                     </>
                   ) : (
                     <>
                       <button onClick={() => { setEditId(p.id); setEditName(p.name); setEditDesc(p.description || '') }}
-                        className="text-slate-500 hover:text-slate-300 p-1"><Pencil size={14} /></button>
+                        className="text-slate-400 hover:text-slate-300 p-1"><Pencil size={14} /></button>
                       <button onClick={() => toggle(p)}
-                        className={`text-xs px-2 py-1 rounded-lg transition-colors ${p.active ? 'text-slate-500 hover:text-amber-400' : 'text-slate-600 hover:text-emerald-400'}`}>
+                        className={`text-xs px-2 py-1 rounded-lg transition-colors ${p.active ? 'text-slate-400 hover:text-amber-400' : 'text-slate-500 hover:text-emerald-400'}`}>
                         {p.active ? 'Uit' : 'Aan'}
                       </button>
-                      <button onClick={() => toggleExpand(p.id)} className="text-slate-500 hover:text-slate-300 p-1">
+                      <button onClick={() => toggleExpand(p.id)} className="text-slate-400 hover:text-slate-300 p-1">
                         {isExpanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
                       </button>
                     </>
