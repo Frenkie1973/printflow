@@ -64,6 +64,15 @@ export default function OrderCard({ order, onRefresh }) {
     await addOrder({ ...rest, status: 'new', created_by_email: user.email })
   }
 
+  const printerStatus = usePrinterStatus()
+  const activePrinter = printerStatus.find(p => 
+    p.id === order.printer_id && p.state === 'PRINTING' && p.time_remaining > 0
+  )
+  // Gebruik printer tijd als die beschikbaar is, anders eigen countdown
+  const printerEndTime = activePrinter 
+    ? new Date(Date.now() + activePrinter.time_remaining * 1000).toISOString()
+    : null
+
   const isPrinting = order.status === 'printing'
   const isActive = ['new', 'preparing', 'printing'].includes(order.status)
 
@@ -107,8 +116,8 @@ export default function OrderCard({ order, onRefresh }) {
           {isPrinting && order.end_time && (
             <div className="mt-3 bg-slate-800 rounded-lg px-3 py-2 flex items-center justify-between">
               <div>
-                <Countdown endTime={order.end_time} />
-                <div><EndTime endTime={order.end_time} /></div>
+                <Countdown endTime={printerEndTime || order.end_time} />
+                <div><EndTime endTime={printerEndTime || order.end_time} /></div>
               </div>
               <div className="text-slate-400 text-xs text-right">{order.print_hours}u {order.print_minutes}m totaal</div>
             </div>
