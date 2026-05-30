@@ -3,7 +3,7 @@ import { useOrders } from '../hooks/useOrders'
 import { useAuth } from '../hooks/useAuth'
 import OrderCard from '../components/OrderCard'
 import OrderForm from '../components/OrderForm'
-import PrinterStatus from '../components/PrinterStatus'
+import PrinterStatusLive from '../components/PrinterStatus'
 import Filters from '../components/Filters'
 import { Plus, Printer, Activity } from 'lucide-react'
 
@@ -37,7 +37,7 @@ export default function Dashboard() {
           <Activity size={12} />
           Printer overzicht
         </h2>
-        <PrinterStatus orders={orders} />
+        <PrinterStatusLive orders={orders} />
       </section>
 
       {/* Header + filters */}
