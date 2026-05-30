@@ -115,15 +115,7 @@ export default function OrderCard({ order, onRefresh }) {
             )}
           </div>
 
-          {isPrinting && order.end_time && (
-            <div className="mt-3 bg-slate-800 rounded-lg px-3 py-2 flex items-center justify-between">
-              <div>
-                <Countdown endTime={printerEndTime || order.end_time} />
-                <div><EndTime endTime={printerEndTime || order.end_time} /></div>
-              </div>
-              <div className="text-slate-400 text-xs text-right">{order.print_hours}u {order.print_minutes}m totaal</div>
-            </div>
-          )}
+
         </div>
 
         {expanded && (
