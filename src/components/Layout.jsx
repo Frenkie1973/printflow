@@ -49,7 +49,7 @@ import { LayoutDashboard, Layers, Library, Package2, LogOut, Wrench } from 'luci
 const NavItem = ({ to, icon: Icon, label, badge }) => (
   <NavLink to={to} className={({ isActive }) =>
     `flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-colors relative
-     ${isActive ? 'text-[#FF2300]' : 'text-slate-500 hover:text-slate-300'}`
+     ${isActive ? 'text-[#FF2300]' : 'text-slate-400 hover:text-slate-300'}`
   }>
     <div className="relative">
       <Icon size={20} />
@@ -117,7 +117,7 @@ export default function Layout({ children }) {
                 {overdueMaintenanceCount} onderhoud
               </NavLink>
             )}
-            <button onClick={signOut} className="text-slate-500 hover:text-slate-300 transition-colors">
+            <button onClick={signOut} className="text-slate-400 hover:text-slate-300 transition-colors">
               <LogOut size={16} />
             </button>
           </div>
@@ -158,7 +158,7 @@ export default function Layout({ children }) {
 
       {/* Mobile bottom nav */}
       <nav className="sm:hidden fixed bottom-0 inset-x-0 bg-black/95 backdrop-blur border-t border-slate-800 z-40 pb-safe">
-        <div className="flex justify-around py-2">
+        <div className="flex justify-around py-2 overflow-x-auto">
           <NavItem to="/" icon={LayoutDashboard} label="Orders" badge={newCount} />
           <NavItem to="/printers" icon={Layers} label="Printers" badge={printingCount} />
           <NavItem to="/artikelen" icon={Library} label="Artikelen" />
@@ -166,7 +166,7 @@ export default function Layout({ children }) {
           <NavItem to="/planning" icon={Layers} label="Planning" />
           <button
             onClick={signOut}
-            className="flex flex-col items-center gap-1 px-4 py-2 text-slate-500 hover:text-slate-300 transition-colors"
+            className="flex flex-col items-center gap-1 px-4 py-2 text-slate-400 hover:text-slate-300 transition-colors"
           >
             <LogOut size={20} />
             <span className="text-[10px] font-medium">Uitloggen</span>
