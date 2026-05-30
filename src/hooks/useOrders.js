@@ -112,3 +112,14 @@ export const completeMaintenance = (printerId, taskId, totalHours) =>
     last_done_at: new Date().toISOString(),
     last_done_at_hours: totalHours,
   })
+
+export function usePrinterStatus() {
+  const [printerStatus, setPrinterStatus] = useState([])
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, 'printer_status'), snap => {
+      setPrinterStatus(snap.docs.map(d => ({ id: d.id, ...d.data() })))
+    })
+    return unsub
+  }, [])
+  return printerStatus
+}
