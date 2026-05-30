@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 import OrderCard from '../components/OrderCard'
 import OrderForm from '../components/OrderForm'
 import PrinterStatusLive from '../components/PrinterStatus'
+import { usePrinterStatus } from '../hooks/useOrders'
 import Filters from '../components/Filters'
 import { Plus, Printer, Activity } from 'lucide-react'
 
