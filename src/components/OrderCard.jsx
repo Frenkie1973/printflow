@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { updateOrder, deleteOrder, useOrders, usePrinters } from '../hooks/useOrders'
+import { updateOrder, deleteOrder, useOrders, usePrinters, usePrinterStatus } from '../hooks/useOrders'
 import { useAuth } from '../hooks/useAuth'
 import StatusBadge from './StatusBadge'
 import { Countdown, EndTime } from './Countdown'
