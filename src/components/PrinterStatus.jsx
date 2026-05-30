@@ -31,11 +31,11 @@ function PrinterCard({ printer }) {
             ['FINISHED','IDLE','READY','UNKNOWN'].includes(state) ? 'bg-emerald-400' :
             state === 'OFFLINE' ? 'bg-slate-600' : 'bg-amber-400'
           }`} />
-          <span className="text-white font-semibold text-sm">{printer.name}</span>
+          <span className="text-white font-semibold text-base">{printer.name}</span>
         </div>
         <div className="flex items-center gap-2">
-          {online ? <Wifi size={11} className="text-slate-600" /> : <WifiOff size={11} className="text-slate-600" />}
-          <span className={`text-xs font-medium ${
+          {online ? <Wifi size={13} className="text-slate-600" /> : <WifiOff size={13} className="text-slate-600" />}
+          <span className={`text-sm font-medium ${
             printing ? 'text-[#FF2300]' :
             ['FINISHED','IDLE','READY','UNKNOWN'].includes(state) ? 'text-emerald-400' :
             state === 'OFFLINE' ? 'text-slate-600' : 'text-amber-400'
@@ -48,16 +48,16 @@ function PrinterCard({ printer }) {
       {printing && printer.filename && (
         <div>
           <div className="flex items-center justify-between mb-1">
-            <span className="text-slate-500 text-xs truncate max-w-[60%]">{printer.filename}</span>
-            <span className="text-white text-xs font-mono font-bold">{Math.round(printer.progress || 0)}%</span>
+            <span className="text-slate-500 text-sm truncate max-w-[60%]">{printer.filename}</span>
+            <span className="text-white text-sm font-mono font-bold">{Math.round(printer.progress || 0)}%</span>
           </div>
           <div className="w-full bg-slate-800 rounded-full h-1.5">
             <div className="h-1.5 rounded-full transition-all" style={{width:`${printer.progress||0}%`,backgroundColor:'#FF2300'}} />
           </div>
           {printer.time_remaining > 0 && (
-            <div className="flex items-center justify-between mt-1.5 text-xs text-slate-500">
+            <div className="flex items-center justify-between mt-1.5 text-sm text-slate-500">
               <span className="flex items-center gap-1">
-                <Clock size={10} />{formatTime(printer.time_remaining)} resterend
+                <Clock size={13} />{formatTime(printer.time_remaining)} resterend
               </span>
               <span className="text-slate-400 font-medium">
                 klaar om {new Date(Date.now() + printer.time_remaining * 1000).toLocaleTimeString('nl-NL', {hour:'2-digit', minute:'2-digit'})}
@@ -68,13 +68,13 @@ function PrinterCard({ printer }) {
       )}
 
       {(printer.temp_nozzle > 0 || printer.temp_bed > 0) && (
-        <div className="flex items-center gap-4 text-xs text-slate-500 border-t border-zinc-900 pt-2">
+        <div className="flex items-center gap-4 text-sm text-slate-500 border-t border-zinc-900 pt-2">
           <span className="flex items-center gap-1">
-            <Thermometer size={10} className="text-red-400" />
+            <Thermometer size={13} className="text-red-400" />
             Nozzle: <span className="text-slate-300">{Math.round(printer.temp_nozzle)}°C</span>
           </span>
           <span className="flex items-center gap-1">
-            <Thermometer size={10} className="text-amber-400" />
+            <Thermometer size={13} className="text-amber-400" />
             Bed: <span className="text-slate-300">{Math.round(printer.temp_bed)}°C</span>
           </span>
         </div>
@@ -95,7 +95,7 @@ export default function PrinterStatusLive() {
   }, [])
 
   if (printers.length === 0) return (
-    <div className="text-slate-600 text-xs py-2">Bridge niet actief — start printflow-bridge.py op kantoor</div>
+    <div className="text-slate-600 text-sm py-2">Bridge niet actief — start printflow-bridge.py op kantoor</div>
   )
 
   return (
