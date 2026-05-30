@@ -153,11 +153,7 @@ export default function OrderCard({ order, onRefresh }) {
                   <Play size={12} />Print starten
                 </button>
               )}
-              {isPrinting && (
-                <button onClick={() => updateStatus('done')} disabled={loading}
-                  className="flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50">
-                </button>
-              )}
+
               {isPrinting && (
                 <button onClick={() => updateStatus('failed')} disabled={loading}
                   className="flex items-center gap-1.5 bg-red-900 hover:bg-red-800 text-red-200 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50">
