@@ -4,6 +4,7 @@ import Layout from './components/Layout'
 import Dashboard from './pages/Dashboard'
 import LoginPage from './pages/LoginPage'
 import PrintersPage from './pages/PrintersPage'
+import PlanningPage from './pages/PlanningPage'
 import ArtikelsPage from './pages/ArtikelsPage'
 import MaterialenPage from './pages/MaterialenPage'
 
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/printers" element={<ProtectedRoute><PrintersPage /></ProtectedRoute>} />
+          <Route path="/planning" element={<ProtectedRoute><PlanningPage /></ProtectedRoute>} />
           <Route path="/artikelen" element={<ProtectedRoute><ArtikelsPage /></ProtectedRoute>} />
           <Route path="/materialen" element={<ProtectedRoute><MaterialenPage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
