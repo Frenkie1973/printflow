@@ -99,6 +99,10 @@ export default function Layout({ children }) {
               `px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white'}`}>
               Materialen
             </NavLink>
+            <NavLink to="/planning" className={({ isActive }) =>
+              `px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white'}`}>
+              Planning
+            </NavLink>
           </nav>
           <div className="flex items-center gap-3">
             {printingCount > 0 && (
