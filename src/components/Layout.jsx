@@ -159,6 +159,7 @@ export default function Layout({ children }) {
           <NavItem to="/printers" icon={Layers} label="Printers" badge={printingCount} />
           <NavItem to="/artikelen" icon={Library} label="Artikelen" />
           <NavItem to="/materialen" icon={Package2} label="Materialen" />
+          <NavItem to="/planning" icon={Layers} label="Planning" />
           <button
             onClick={signOut}
             className="flex flex-col items-center gap-1 px-4 py-2 text-slate-500 hover:text-slate-300 transition-colors"
