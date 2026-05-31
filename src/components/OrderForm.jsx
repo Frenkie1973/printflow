@@ -86,8 +86,20 @@ export default function OrderForm({ order, onClose }) {
   }, [form.article_number, articles])
 
   const applyArticle = (a) => {
-    setForm(f => ({ ...f, article_number: a.article_number, order_name: a.description || f.order_name,
-      print_hours: a.default_print_hours || f.print_hours, print_minutes: a.default_print_minutes || f.print_minutes, notes: a.notes || f.notes }))
+    setForm(f => ({
+      ...f,
+      article_number: a.article_number,
+      order_name: a.description || f.order_name,
+      print_hours: a.default_print_hours ?? f.print_hours,
+      print_minutes: a.default_print_minutes ?? f.print_minutes,
+      notes: a.notes || f.notes,
+      // Vul materialen in als die opgeslagen zijn
+      materials: a.default_materials?.length ? a.default_materials : f.materials,
+      // Vul printer in als die opgeslagen is
+      printer_id: a.default_printer_id || f.printer_id,
+      // Vul aantal in
+      quantity: a.default_quantity || f.quantity,
+    }))
     setSuggestions([])
   }
 
