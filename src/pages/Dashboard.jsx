@@ -162,6 +162,10 @@ export default function Dashboard() {
     await updateOrder(orderId, { status: 'failed' })
   }
 
+  const handleDone = async (orderId) => {
+    await updateOrder(orderId, { status: 'done' })
+  }
+
   // Orders per printer
   const ordersPerPrinter = (printerId) =>
     orders.filter(o => o.printer_id === printerId && ['new','preparing','printing'].includes(o.status))
@@ -306,10 +310,16 @@ export default function Dashboard() {
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {order.status === 'printing' && (
-                      <button onClick={() => handleFailed(order.id)}
-                        className="text-sm text-red-400 border border-red-900 px-3 py-1.5 rounded-lg hover:bg-red-900/20">
-                        Mislukt
-                      </button>
+                      <>
+                        <button onClick={() => handleDone(order.id)}
+                          className="text-sm text-emerald-400 border border-emerald-900 px-3 py-1.5 rounded-lg hover:bg-emerald-900/20">
+                          Klaar
+                        </button>
+                        <button onClick={() => handleFailed(order.id)}
+                          className="text-sm text-red-400 border border-red-900 px-3 py-1.5 rounded-lg hover:bg-red-900/20">
+                          Mislukt
+                        </button>
+                      </>
                     )}
                     <button onClick={() => setEditingOrder(order)}
                       className="text-sm text-slate-400 border border-slate-700 px-3 py-1.5 rounded-lg hover:text-white hover:border-slate-500">
