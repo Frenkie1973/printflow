@@ -5,7 +5,7 @@ import OrderForm from '../components/OrderForm'
 import { Thermometer, Clock, Wifi, WifiOff, Plus, Search, AlertTriangle } from 'lucide-react'
 import { isPast, isToday, isTomorrow, format, differenceInDays } from 'date-fns'
 import { nl } from 'date-fns/locale'
-import { updateOrder } from '../hooks/useOrders'
+import { updateOrder, deleteOrder } from '../hooks/useOrders'
 
 const STATE_LABELS = {
   PRINTING: 'Aan het printen', IDLE: 'Vrij', FINISHED: 'Klaar',
@@ -166,6 +166,10 @@ export default function Dashboard() {
     await updateOrder(orderId, { status: 'done' })
   }
 
+  const handleDelete = async (orderId) => {
+    if (window.confirm('Order verwijderen?')) await deleteOrder(orderId)
+  }
+
   // Orders per printer
   const ordersPerPrinter = (printerId) =>
     orders.filter(o => o.printer_id === printerId && ['new','preparing','printing'].includes(o.status))
@@ -324,6 +328,10 @@ export default function Dashboard() {
                     <button onClick={() => setEditingOrder(order)}
                       className="text-sm text-slate-400 border border-slate-700 px-3 py-1.5 rounded-lg hover:text-white hover:border-slate-500">
                       Bewerken
+                    </button>
+                    <button onClick={() => handleDelete(order.id)}
+                      className="text-sm text-slate-600 border border-slate-800 px-2.5 py-1.5 rounded-lg hover:text-red-400 hover:border-red-900">
+                      ✕
                     </button>
                   </div>
                 </div>
